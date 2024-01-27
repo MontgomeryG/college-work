@@ -1,0 +1,394 @@
+---
+title: "Untitled"
+author: ""
+date: ""
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+---
+title: "248 Final Project: Principal Component Analysis"
+author: "Monty Gash"
+date: "1/3/2022"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(palmerpenguins)
+theme_set(theme_bw(24))
+library(ggbiplot)
+```
+
+
+**Introduction**
+
+*Data set:* 'Multilevel Monitoring of Activity and Sleep in Healthy People'. From "psysionet.org".
+
+This research was conducted by health scientists, psychologists, and chemists from the University of Pisa in Italy.
+
+These data were collected on 22 "healthy" adult males pertaining to their sleep and physiological characteristics.
+
+The variables of interest for this research consisted of a long list of scores to self-reported questionnaires and daily movement recorded by wearable trackers.
+
+
+**Data collection methods**
+
+Data was collected constantly over a 24-hour period as participants underwent their daily routines. There were two major ways that the researchers collected the data; via self-reporting and via bio-trackers.
+
+*Self-reporting:* A large part of the data relied on user's self-recorded answers to standardized questionnaires. A problem arises with the fact that self-reporting relies on subjective experience. We will have to assume that since the questionnaires that were used are all standardized, the creators of the questionnaires likely accounted for the self-reporting factor.
+
+*Bio tracker data:* The other half of the data was recorded using bio trackers that constantly recorded movements over the 24-hour period. The heart rate was used to track sleep stages, and would indicate the physical rigor associated with each of the participant's daily activities. 
+
+The study does not mention if the sample of participants is random. Participants of the study were volunteers. We can not be sure that the research practiced random selection, and therefore we should refrain from generalizing the conclusions gained from the data set to a population of individuals that is too different from the set of participants. 
+
+There are also no details about the way these researchers quantified being 'healthy'.
+
+
+**Guiding questions:** Which variables in the data set contain the most variance between the data points? What variables do we need in order to effectively explain the variance of the data points found in the data set?
+
+
+**Methodology:** *Principal Component Analysis (PCA)*
+
+PCA is a form of dimensionality reduction that was first invented in 1901 by Karl Pearson.
+
+The background mathematics for PCA are based in linear algebra; eigenvectors/values, vector projections, derivatives of matrix operations, etc.
+
+This project omits the deeper mathematical explanation of PCA, and rather discusses what Principal Component Analysis is, why we use it, how to implement it in R, and how to analyze the results.
+
+**Principal Component Analysis**
+
+We can begin by thinking of each variable in a data set as one dimension.
+
+Consider two variables, $x$ and $y$, each representing a dimension.
+
+A scatter plot of the data points given the two variables can be seen below.
+```{r}
+knitr::include_graphics("ScatterPlot.png")
+```
+We can see that most of the variation between each data point has to do with the values for the x-axis, so we can remove the y-axis and express the variation using a number line, without getting rid of too much of the original variation described by the two variables. 
+
+In this case, we are transitioning from two dimensions to one dimension, while maintaining a similar level of variability among the data points.
+
+This is what principal component analysis seeks to do with multiple dimensions.
+
+PCA is trying to find the line that captures the most variability from end to end, and minimizes the error; the distance from the line to each data point.
+
+**Why PCA?**
+
+Principal component analysis helps us find variables that explain the most variability.
+
+Allows for a more clear view of the data set, where we can more easily identify trends, clusters, or jumps in the data.
+
+Helps remove multicollinearity. PCA creates new variables, called principal components, which are linear combinations of the original variables. PCA groups variables with high correlation into the same principal components, which ultimately creates a new set of variables are are less correlated with each other than the original set.
+
+
+**Our data set.**
+
+Lets begin by taking a look at the data
+```{r}
+library(readr)
+finalData248<-read_csv("finalDataSet248.csv")
+head(finalData248)
+```
+We see physical characteristics on the far left, scores for various questionnaires, and scores of their sleep times recorded by their trackers. Let's find out which of these variables account for the most variance between individuals in the data set by using PCA.
+
+**Performing PCA.**
+
+*Scale Data.*
+
+We must first scale the variables so that each of them have a mean of 1 and a standard deviation of zero. We have to do this because the variables in question measure different things. PCA seeks to find the variables that explain the most variability, so the most variability would immediately be the variable that has the largest values for its measurements if we did not first scale our variables.
+
+Using the scale function in R.
+```{r}
+scaledData<-scale(finalData248)
+summary(scaledData)[1:6,1:5]
+```
+The above scaled variables show a mean of 0 and a standard deviation of about 1.
+
+
+Now we can use R to perform PCA on the scaled data with the 'princomp' function.
+```{r}
+data.pca<-princomp(scaledData)
+summary(data.pca)
+```
+Here we have the principle components. We should focus on the Proportion of variance and the cumulative proportion values.
+
+*Proportion of Variance:* How much variance each principal component accounts for after the ones that come before it.
+
+*Cumulative Proportion:* How much variance in total is described by the principal component and the ones that come before it.
+
+We can choose a cut off point for how many principal components we want to keep based on how much total variance we want to describe with our new dimensions.
+
+Based on the amount of variability we desire to explain, we can choose a point to stop including principal components by examining the cumulative proportion. In this case, it seems that we would need 14 variables to reach a point where 99% of the variability is explained; 13 if we were to round up from 0.9856.
+
+**Constructing a Scree plot.**
+
+A Scree Plot is a graph showing the amount of the variability described by each principal component. 
+
+To create one, we first must calculate the total percentage of variance explained by each of the principal components. We can do so by dividing the individual variations explained by each component by the sum of the variation explained by each component.
+
+Using R to calculate the variance explained by each principal component.
+```{r}
+varExplained<-data.pca$sdev^2/sum(data.pca$sdev^2)
+head(varExplained)
+```
+These values correspond to the "Proportion of Variance" for each principal component.
+
+Creating the Scree Plot with R.
+```{r}
+library(ggplot2)
+qplot(, varExplained) + 
+  geom_line() + 
+  xlab("Principal Component") + 
+  ylab("Variance Explained") +
+  ggtitle("Scree Plot") +
+  ylim(0, 1)
+```
+Here is a visualization of the variance described by each of the principal components. All graphs of principal components look similar to this one, since the first PC will always account for the most variance, followed by PC 2, and so on an so on. All Scree Plots show variation decreasing as the principal component number increases.
+
+**Loadings.**
+
+The loadings of a principal component are the weights on each of the variables within that principal component. Each loading shows how much each variable contributes to a given principal component.
+
+From the loadings, we can determine what each principle component is actually taking into consideration. Since each principal component is a linear combination of multiple variables in the data set, the loadings can be thought of as the scalars attached to each of the vectors(variables) in the linear combination. So for example, if we were to have a principal component that has high loadings for the width, length, height of a dog, we can say that the first PC captures the overall size of the dog.
+
+We can use the loadings function in R and view the loadings for the first 5 PC's.
+```{r}
+data.pca$loadings[,1:5]
+```
+Above are the loadings for the first 5 principal components given each original variable.
+
+A positive loading represents a positive correlation between the variable and PC.
+
+A negative loading represents a negative correlation between the variable and PC.
+
+*Principal component 1.*
+
+Largest weights for principal component 1:
+
+'Efficiency', 0.3614, percentage of sleep time on total sleep in bed.
+
+'wakeAfterSleepOnset', -0.3931, time spent awake after falling asleep for the first time.
+
+'numberOfAwakenings', -0.3254, number of awakenings after falling asleep for the first time.
+
+'movementIndex', -0.3407, number of minutes without movement expressed as a percentage of the movement phase.
+
+'fragmentationIndex', -.3406, number of minutes with movement expressed as a percentage of the immobile phase.
+
+'sleepFragmentationIndex', -0.3902, ratio between movement and fragmentation indices.
+
+So we can see that the first principal component considers the above variables, and these variables explain the most variability between individuals in the data set. These variables can be summarized by thinking as the first PC as considering the time asleep, awakenings during sleep, and movement during sleep.
+
+*Principal component 2.*
+
+The next principal component, 2, has different variables with the highest weights:
+
+'pittsburgh', -0.3559, self-reported questionnaire about sleep quality over the past month.
+
+'totalMinutesInBed', -0.4161, time in bed.
+
+'totalTimeAsleep', -0.4221, total time asleep.
+
+'averageAwakeningLength', -0.4884, average time of each awakening after first falling asleep.
+
+
+So the second principal component accounts for the above variables that have to do with sleep quality. These variables within the second principal component account for the second most variation among individuals within the data set.
+
+We can note that the variables that have the highest weights for PC 2 seem to be very similar to the ones in PC 1; each set of variables has to do with sleep in general. So when labeling our principal components we have to make sure we explain what exactly each one is measuring in terms of the original variables in the data set.
+
+*Principal component 4.*
+
+'heightCm', 0.330825748, height in centimeters.
+
+'age', 0.435224816, age in years.
+
+'MEQ', 0.415777333, value for the response to Morningness–eveningness questionnaire(morning person or evening person?)
+
+'dailyStress', 0.302605200, reported stress levels from questionnaire.
+
+'panasPos22', 0.345850171, reported positive emotions from questionnaire.
+
+'panasNeg22', -0.349847391, reported negative emotions from questionnaire.
+
+So PC 4 has the highest weights coming from height and age, two physical characteristics, and responses to questionnaires accounting for mood. 
+
+**Key Idea:** Each principal component acts as a new variable that has weights corresponding to each original variable. We can classify each principal component as accounting for something that characterizes the group of original variables that have the highest weights for that principal component.
+
+**Scores.** The scores tell us where each of our participants will lie on the new dimension we created. The 0 mark is an intercept, negative numbers indicate small values for the PC, positive numbers indicate large values for the PC.
+
+Scores for PC 1.
+```{r}
+data.pca$scores[,1]
+```
+Score for participant 1: 2.514
+
+Score for participant 19: -4.103
+
+Given the above scores, we should expect to see the first participant have larger values for the variables with the highest weights for principal component 1, compared to the 19th participant.
+
+For PC 1, we can note that the largest weights are 'Efficiency', 0.3614, 'wakeAfterSleepOnset', -0.3931, 'numberOfAwakenings', -0.3254, 'movementIndex', -0.3407, 'fragmentationIndex', -.3406, 'sleepFragmentationIndex', -0.3902. 
+
+Lets examine rows 1 and 19 of the data set to see if our conjecture is true.
+```{r}
+finalData248[c(1,19),1:9]
+finalData248[c(1,19),10:15]
+finalData248[c(1,19),16:19]
+finalData248[c(1,19),19:20]
+```
+*Efficiency*: Participant 1 has a higher value for efficiency than participant 19, which concurs with our hypothesis.
+
+*wakeAfterSleepOnset*: Participant 1 has a lower value for this variable than participant 19, but this makes sense, since we see that the weight associated with 'wakeAfterSLeepOnset' is negative. If the weight is negative, we should expect the first participant to have a lower value than the 19th for the given variable, since the scores for participant 1 and 19 are 2.514 and -4.103, respectively.
+
+*numberOfAwakenings*: Participant 1 has a lower value for this variable than participant 19, which concurs with our hypothesis.
+
+*movementIndex*: Participant 1 has a lower value for this variable than participant 19, which concurs with our hypothesis.
+
+*fragmentationIndex*: Participant 1 has a lower value for this variable than participant 19, which concurs with our hypothesis.
+
+*sleepFragmentationIndex*: Participant 1 has a lower value for this variable than participant 19, which concurs with our hypothesis.
+
+The above analysis shows how the scores of each user for each PC relates to the values they have for each variable in the data set. The score of each data point explains the relationship between that data point and the principal component.
+
+A positive score demonstrates a positive relationship with the given principal component, and a negative score demonstrates a negative relationship with each principal component.
+
+To determine what the score means in the context of the original variables, we refer to the loadings(weights) of each variable given the principal component.
+
+**Biplot.**
+A biplot is a graph that has one principal component on each axis. Using it, we can interpret the values of the data points in 2 dimensions, given the new variables(principal components) we created.
+
+We can use R to create a biplot using the first two principal components.
+```{r}
+biplot = ggbiplot(pcobj = data.pca,
+                  choices = c(1,2),
+                  obs.scale = 2, var.scale = 2, 
+                  labels = row.names(finalData248),     
+                  labels.size = 5,
+                  varname.size = 4,
+                  varname.abbrev = FALSE, 
+                  var.axes = TRUE,
+                  circle = FALSE,        
+                  ellipse = FALSE) 
+print(biplot)
+```
+
+The lines seen in the biplot correspond to the loadings for the Principal components. The loadings are the weights associated with each variable within each principal component.
+
+Variables whose lines are close to each other have high correlation.
+
+Variables with lines that are far from each other have weak correlation.
+
+We can note that the lines are centered at (0,0). 
+
+Another important aspect of the biplot to know is that differences along the first PC axis are more substantial than those coming after. So the differences between the clusters given PC 1 are more substantial than the differences given PC 2.
+
+
+Variables with lines that fall to the right of vertical-axis the PC1 axis have a positive correlation with PC 1. So pittsburgh and Efficiency have positive correlations with PC1. Lines on the left of that axis have a negative correlation with PC 1.
+
+Variables with lines that fall above the horizontal-axis have a positive correlation with PC 2, while those variables whose lines fall below have a negative correlation with PC 2.
+
+We can test this idea by examining the loadings of the first two principal components.
+
+For 'pittsburgh', we should expect to see a positive loading for PC1, and a negative loading for PC2.
+
+For 'Efficiency', we should expect to see a positive loading for PC1, and a, just barely, positive loading for PC2.
+
+Loadings of the first two principal components.
+```{r}
+data.pca$loadings[,1:2]
+```
+The loading for 'pittsburgh' is positive given PC1 and negative given PC2, which concurs with the inferences we made given the biplot.
+
+The loading for 'Efficiency' is positive given PC1, and positive given PC2, which concurs with the inferences we made given the biplot. We can also note that the loading for 'Efficiency' given PC2 is 0.02037, which is a small positive number. The fact that it is a small positive number relates to the fact that the line for 'Efficiency' seen in the biplot is just barely above the horizontal-zero-axis.
+
+Where the data points lie tell us their value for the principal component, and ultimately which type of values they will have for each of the variables that make up each principal component. So for example, participant 11 should have a much higher value for 'efficiency' than participant 7.
+
+Let's see if this is the case by showing the values of 'Efficiency' for participants 7 and 11.
+```{r}
+finalData248[c(7,11),12]
+```
+This is the case.
+
+Using a biplot is key in order to get a visualization of the distribution of the data points given two distinct principal components.
+
+**Conclusion: What can we do once we create principal components?**
+
+*Reduce multicollinearity.*
+The main goal of principal component analysis is to gather variables that are highly correlated into specific principal components. By doing so, we are reducing the dimensionality of our data set, which makes it easier to do the following:
+
+*Identify the "important" variables.*
+The initial question that we sought to answer was which variables explain the most variability, and principal components lays that out for us. More specifically, we should look at the weights associated with the most prominent principal components to decide which variables explain the most variability. "Most prominent" meaning up until we are satisfied with the amount of variability that each principal component explains. Remember that we choose the stopping point of how much variability we want our principal components to explain. Which ever variables have the highest weights in the most prominent principal components should be the ones that we keep when analyzing our data.
+
+*Identify clustering.*
+We can look for clusters in the data. These clusters are easier to see when we have less dimensions. There are some clusters that we can see in the biplot, but since our data set only contains 22 samples, the clustering is not that prominent. Data sets with more samples will show more clear evidence of clustering when using PCA. The data points that are clustered together are similar based on the two particular principal components in the biplot.
+
+*Identify outliers.*
+From the biplot, we can see that participant 9 seems to be an outlier based on the first two principal components. Removing that outlier may improve the statistical significance of our conclusions.
+
+
+**Model conditions and drawbacks to PCA**
+
+*Model conditions.*
+
+There should be examples of variables with high correlation among the data set.
+
+The original variables must be continuous.
+
+*Drawbacks.*
+
+It is hard to interpret the new variables. As we saw above, we really need to do some digging and really understand what is going on in order to accurately describe what each principal component represents. 
+
+There are case where the principal components don't reduce that many variables. We saw that we would need about 14 out of the original 20 variables in order to describe 99% of the variability with the newly created principal components.
+
+We will be losing some information depending on the end amount of variability we want to maintain. If we are at 90% with 3 PC's but 99% with 8, is is reasonable to remove 5 variables while losing 9% of the explained variability? The answer to this question depends on the goals of the researcher.
+
+
+**References**
+
+ https://www.youtube.com/watch?v=TJdH6rPA-TI 
+ 
+https://www.youtube.com/watch?v=kw9R0nD69OU 
+
+https://www.youtube.com/watch?v=g-Hb26agBFg 
+
+https://www.datacamp.com/community/tutorials/pca-analysis-r
+
+https://www.sartorius.com/en/knowledge/science-snippets/what-is-principal-component-
+analysis-pca-and-how-it-is-used-507186#:
+~:text=Principal%20component%20analysis%
+2C%20or%20PCA,more%20easily%20visualized%20and%20analyzed
+
+https://github.com/vqv/ggbiplot/issues/53
+
+https://en.wikipedia.org/wiki/Principal_component_analysis)
+
+https://www.youtube.com/watch?v=83c2Y5gErjg
+
+https://www.statology.org/scree-plot-r/
+
+https://www.youtube.com/watch?v=HMOI_lkzW08
+
+```{r}
+
+```
+
