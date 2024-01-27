@@ -1,0 +1,48 @@
+#include <iostream>
+using namespace std;
+#include "ItemKeyedList.h"
+#include "Item.h"
+#define MAX_CAPACITY 30
+
+
+int main()
+{
+    //create a fixed-sized array of items
+    
+    ItemKeyedList itemList[MAX_CAPACITY];
+    
+    int numItems = 0;
+    do
+    {
+        cout << "How many items would you like to order? Enter an integer 1-30:  ";
+        cin >> numItems;
+    }
+    while(numItems < 0 || numItems > MAX_CAPACITY);     //if we are given a negative or too many we prompt again
+    
+    
+    for(int i = 0; i < numItems; i++)
+    {
+        std::string name;
+        int key;
+        float price;
+        
+        //have the user input all of the key info for the first item
+        
+        cout << "Enter item key value:  ";
+        cin >> key;
+        
+        cout << "Enter name:  ";
+        cin >> name;
+        
+        cout << "Enter price:  ";
+        cin >> price;
+        
+        //create an item to hold the values
+        Item ItemWithInfo(key, name, price);
+        //add that item to the list created above
+        itemList[i].insert(ItemWithInfo);
+    }
+itemList[this->numItems].print();
+
+    
+}

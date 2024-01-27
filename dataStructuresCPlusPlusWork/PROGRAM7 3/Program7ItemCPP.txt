@@ -1,0 +1,71 @@
+#include <iostream>
+using namespace std;  
+  #include "Item.h"
+    
+    
+    Item::Item()
+    {
+        this->key = 0;
+        this->name = "Undefined";
+        this->price = 0.0f;
+    }
+    
+    Item::Item(int newKey, std::string name, float newPrice)       //constructor that takes in a new item
+    {
+        this-> name = name;
+        
+        this->price = newPrice;
+        if(this->price < 0.0f)          //solving the case for negative price which is very unlikely
+            this->price = 0.0f;
+            
+        this->key = newKey;            //taking in a nonegative key
+        if(this->key < 0)
+            this->key = 0; 
+    }
+    
+        //pre: recieves key as non-negative int
+    //post: if given price is non-negative, then change
+    //the price of that item to value and return true
+    //else, return false
+    bool Item::setPrice(float newPrice)
+    {
+        if(price >= 0.0f)
+        {
+            this->price = newPrice;
+            return true;
+        }
+        else
+            return false;
+    }
+    
+    //pre: receives unit price as non-negative float
+    //post: if price non-negative then change price
+    //to given value and return true
+    //else false
+    bool Item::setKey(int newKey)
+    {
+        if(newKey >= 0)
+        {
+            this->key = newKey;
+            return true;
+        }
+        else
+            return false;
+    }
+    
+    
+    int Item::getKey() const
+    {
+        return this->key;
+    }
+    
+    
+    std::string Item::getName() const
+    {
+        return this-> name;
+    }
+    
+    float Item::getPrice() const
+    {
+        return this->price;
+    }

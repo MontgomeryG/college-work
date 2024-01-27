@@ -1,0 +1,9 @@
+Best Case: We only have to add one new item to an empty list.
+Worse Case: We have to add items to the list equal to the max capacity of that list. Each item we add has a different key and the order we add it in is unsorted. So we will have to resort the list each time we add an element.
+
+BigO of Contains
+-Binary O(log base(n))
+
+BigO of Insert
+-Run sequential to see where in the list the new item(or rather the new key) will go
+-O(n)

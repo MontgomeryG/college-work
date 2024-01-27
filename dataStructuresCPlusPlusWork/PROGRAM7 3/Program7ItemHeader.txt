@@ -1,0 +1,42 @@
+#ifndef ITEM_HDR
+#define ITEM_HDR
+#include <string>
+#include <iostream>
+using namespace std;
+
+class Item
+{
+private:
+    int key;
+    std::string name;
+    float price;
+    
+public:
+    Item();
+    
+    Item(int newKey, std::string name, float newPrice);
+    
+    //pre: recieves key as non-negative int
+    //post: if given price is non-negative, then change
+    //the price of that item to value and return true
+    //else, return false
+    bool setPrice(float newPrice);
+    
+    //pre: receives unit price as non-negative float
+    //post: if price non-negative then change price
+    //to given value and return true
+    //else false
+    bool setKey(int newKey);
+    
+    //return the key
+    int getKey() const;
+    
+    //return the name
+    std::string getName() const;
+    
+    //return the price
+    float getPrice() const;
+    
+};
+
+#endif

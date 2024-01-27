@@ -1,0 +1,110 @@
+#include "ItemKeyedList.h"
+#include <iostream>
+using namespace std;
+
+  ItemKeyedList::ItemKeyedList()
+  {
+      this->numItems = 0;
+  }
+    
+    
+    //insert
+    //pre: recieves item of type Item
+    //Post: if list is not full and item key is unique, insert item into 
+    //Itemkeyedlist and return true
+    //Else return false
+    bool  ItemKeyedList::insert(Item newItem)
+    {
+        if(this->isFull() == false && this->contains(newItem.getKey())==false)
+        {
+            int i = 0;
+            //if the new key value is bigger than the key value of the item in the first slot
+            //we check the compare it with the next key in the list
+            while(newItem.getKey() > this->itemList[i].getKey())
+            {
+                i++;
+            }
+            
+            if(newItem.getKey() < this->itemList[i].getKey())
+            {                
+                int positionsToMove = this->numItems - i;
+                while(positionsToMove >=0)
+                {
+                    this->itemList[positionsToMove+1] = this->itemList[positionsToMove];
+                    positionsToMove = positionsToMove -1;
+                }
+            }
+             this->itemList[i] = newItem;
+        }
+    }
+    
+    
+    //contains (const)
+    //pre: recieves a key value of type int
+    //post: returns true if an item has key vaue equal to given key value
+    //else return false
+    bool ItemKeyedList::contains(int newKey)
+    {
+        bool isFoundIt = false;
+        int low = 0;
+        int high = this->numItems-1;
+        
+        while(low<high && isFoundIt==false)
+        {
+             int mid = (low+high)/2;
+            if (this->itemList[mid].getKey() == newKey)
+            {
+                isFoundIt = true;
+            }
+            else if (newKey < itemList[mid].getKey())
+            {
+                high = mid - 1;
+            }
+            else
+            {
+                 low = mid + 1;
+            }
+        }
+        
+    }
+    
+    
+    //ifFull (const)
+    //returns true if collection is full...else false
+    bool  ItemKeyedList::isFull() const
+    {
+        if(this->numItems < MAX_CAPACITY)
+            return true;
+        else
+            return false;
+    }
+    
+    
+    //isEmpty (const)
+    //returns true if collection is empty...else false
+    bool  ItemKeyedList::isEmpty() const
+    {
+        if(this->numItems ==0)
+            return true;
+        else
+            return false;
+    }
+    
+    //size (const)
+    //returns number of items contained as an int
+    int  ItemKeyedList::size() const
+    {
+        return this->numItems;
+    }
+    
+    //print (const)
+    //print each item in ascending order by key values
+    void  ItemKeyedList::print() const
+    {
+        int i =0;
+        while (i < numItems)
+        {
+            cout<<itemList[i].getName()<< "         " << itemList[i].getKey() << "          " << itemList[i].getPrice() << endl;
+            i = i++;
+        }
+    }

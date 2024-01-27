@@ -1,0 +1,53 @@
+#ifndef ITEMKEYEDLIST_HDR
+#include "Item.h"
+#define MAX_CAPACITY 30
+#define ITEMKEYEDLIST_HDR
+#include <iostream>
+using namespace std;
+
+
+class ItemKeyedList
+{
+private:
+    int numItems;
+    Item itemList[MAX_CAPACITY];
+    
+    
+public:
+    ItemKeyedList();
+    
+    
+    //insert
+    //pre: recieves item of type Item
+    //Post: if list is not full and item key is unique, insert item into 
+    //Itemkeyedlist and return true
+    //Else return false
+    bool insert(Item newItem);
+    
+    
+    //contains (const)
+    //pre: recieves a key value of type int
+    //post: returns true if an item has key vaue equal to given key value
+    //else return false
+    bool contains(int key);
+    
+    
+    //ifFull (const)
+    //returns true if collection is full...else false
+    bool isFull() const;
+    
+    
+    //isEmpty (const)
+    //returns true if collection is empty...else false
+    bool isEmpty() const;
+    
+    //size (const)
+    //returns number of items contained as an int
+    int size() const;
+    
+    //print (const)
+    //print each item in ascending order by key values
+    void print() const;
+};
+
+#endif
