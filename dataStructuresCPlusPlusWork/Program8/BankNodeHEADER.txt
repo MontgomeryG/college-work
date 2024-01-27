@@ -1,0 +1,46 @@
+#ifndef NODE_HDR
+#define NODE_HDR
+#include "Customer.h"
+
+
+class Node
+{
+//Node HAS-A
+//-data...of type Customer
+//-next: a pointer to a Node object that follows 
+private:
+    Customer data;
+    Node* next;
+    
+public:
+     
+    // initializes to defaults of data to default customer and next NULL
+    Node();
+
+
+    //-pre: receives specified customer value...
+    //-post: assigns data to given value and sets next to NULL
+   Node(Customer value);
+
+
+    //setNext
+    //-pre: receives pointer to another Node
+    //-post: assigns next to that other node's pointer
+    //-post: returns nothing
+    void setNext(Node* otherNode);
+
+    //getData
+    //-pre: recieves nothing
+    //-post: return customer  data
+    Customer getData() const;
+
+    //getNext
+    //-pre: recieves nothing
+    //-post: return Node* pointer to next Node in chain; else NULL
+    Node* getNext();
+};
+
+
+
+
+#endif

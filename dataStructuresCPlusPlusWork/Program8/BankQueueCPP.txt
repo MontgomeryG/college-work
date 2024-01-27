@@ -1,0 +1,92 @@
+#include "Queue.h"
+#include "Node.h"
+#include "Customer.h"
+
+//constructor
+Queue::Queue()
+{
+    this->first = NULL;
+    this->last = NULL;
+}
+
+//isEmpty
+//if first and last are NULL return true
+//else false
+bool Queue::isEmpty() const
+{
+    if(this->first==NULL && this->last==NULL)
+        return true;
+    else
+        return false;
+}
+
+//isFull
+//if queue is full return true
+//else false
+//will only be true when memory limit reached...
+bool Queue::isFull() const
+{
+        return false;
+}
+
+//insert
+//recieves customer value 
+//post: if not full, insert customer data
+//at end of que and return true...else false
+//Must create new Node to hold new customer
+//Then insert it at the end
+bool Queue::insert(Customer newCustomer)
+{
+    //create a new pointer to the new node(a customer)
+    Node* in = new Node(newCustomer);
+    //if que is empty
+    if(this->isEmpty())
+    {
+        //make first and last point to new node
+        this->first = in;
+        this->last = in;
+    }
+    //if our que is not empty
+    else
+    {
+        //make the last node point to the new node
+        this->last->setNext(in);
+        //now we need last to point to same place
+        //that new node is
+        this->last = in;
+    }
+}
+    
+    
+//remove    
+//pre:recieves nothing
+//post: removes the customer at the front of the queue
+Customer Queue::remove()
+{
+
+    //create a new customer that we will save our info into
+    //from our customer we are removing
+    Customer oldCustomer;
+    
+    //if we actually have a customer
+    if(this->isEmpty() != true)
+    {
+        //since we know we have a customer
+        //save the data from the first node in the list into newCustomer
+        oldCustomer= this->first->getData();
+        //if we have only one node
+        if(this->first==this->last)
+        {
+            //make queue empty
+            this->first = NULL;
+            this->last = NULL;
+        }
+        //if que has more than one
+        else
+        {        
+            //make first point to the node that the first node was pointing to
+            this->first = this->first->getNext();
+        }
+        return oldCustomer;
+    }
+}

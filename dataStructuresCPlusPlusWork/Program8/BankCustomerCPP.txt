@@ -1,0 +1,68 @@
+#include "Customer.h"
+
+
+//default constructor.
+//-set strings to "none" and ints to 0
+Customer::Customer()
+{
+    this->customerName= "none";
+	 this->task = "none";
+	this->timeTask = 0;
+	this->timeServed = -1;
+}
+
+
+//constructor that recieves arguments for name, task, timeTask
+Customer::Customer(std::string customerName, std::string task, int timeTask)
+{
+	this->task = task;
+	this->timeTask = timeTask;
+    this->customerName = customerName;
+	this->timeServed = -1;
+}
+
+
+//setTimeServed
+//-pre: recieves an integer value 
+//-post: sets timeServed to that value
+//-post: return nothing
+void Customer::setTimeServed(int newTime)
+{
+    this->timeServed = newTime;
+}
+
+
+//getTask
+//-pre: recieves nothing
+//-post: return the task name
+std::string Customer::getTask() const
+{
+  return this->task;
+}
+
+
+//getTimeTask
+//-pre: recieves nothing
+//-post: returns timeTask
+int Customer::getTimeTask() const
+{
+  return this->timeTask;
+}
+
+
+//getTimeServed
+//-pre: recieves nothing
+//-post: returns timeServed
+int Customer::getTimeServed() const
+{
+  return this->timeServed;
+}
+
+
+//getName
+//-pre: Recieves nothing
+//-post: returns the customer's name
+std::string Customer::getName() const
+{
+    return this->customerName;
+}

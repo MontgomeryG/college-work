@@ -1,0 +1,47 @@
+#include "Node.h"
+#include "Customer.h"
+
+    //default constructor
+    // initializes to defaults of data to a new customer and next NULL
+    Node::Node()
+    {
+        this->data = Customer();
+        this->next = NULL;
+    }
+
+
+    //constructor
+    // pre- receives specified data value...a customer
+    // post- assigns data to given customer data and sets next to NULL
+   Node::Node(Customer newCustomer)
+   {
+       this->data = newCustomer;
+       this->next = NULL;
+   }
+
+
+
+    //setNext
+    //-pre: receives pointer to another Node
+    //-post: assigns next to that other node's pointer
+    //-post: returns nothing
+    void Node::setNext(Node* otherNode)
+    {
+        this->next = otherNode;
+    }
+
+    //getData
+    //-pre: recieves nothing
+    //-post: return customer  data
+    Customer Node::getData() const
+    {
+        return this->data;
+    }
+
+    //getNext
+    //-pre: recieves nothing
+    //-post: return Node* pointer to next Node in chain; else NULL
+    Node* Node::getNext()
+    {
+        return this->next;
+    }

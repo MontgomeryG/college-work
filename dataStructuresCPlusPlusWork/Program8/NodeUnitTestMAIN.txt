@@ -1,0 +1,51 @@
+#include "Node.h"
+#include "Customer.h"
+#include <iostream>
+using namespace std;
+
+//printList
+// -pre: receives pointer to first Node in a list.
+// -post: will print Node values in order.
+void printList(Node* front)
+{
+    Node* current = front;
+	while(current != NULL)
+	{
+        cout << current->getData().getName() << "   " << current->getData().getTask() << endl;
+		current = current->getNext();
+	}
+}     
+
+
+int main()
+ {
+    Customer customer1("Monty", "Withdraw", 5);
+    Customer customer2("Isa", "Balance Checks", 10);
+    Customer customer3("Mom", "Fund College", 60);
+     
+
+
+//create a first pointer and make it point to NULL                 
+Node* first = NULL;
+
+//now create a pointer to our first node(customer)
+Node* temp1 = new Node(customer1);
+
+//now make that first pointer point to the same node that our temp pointer points to
+first = temp1;
+
+//now make a new pointer for our next node
+Node* temp2 = new Node(customer2);
+
+//now set the first node's pointer(temp1) to point to the new node
+temp1->setNext(temp2);
+
+//now create a new node with customer3
+Node* temp3 = new Node(customer3);
+
+//and set the second node's pointer to point to the third
+temp2->setNext(temp3);
+
+
+printList(first);
+}          

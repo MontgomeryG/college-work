@@ -1,0 +1,58 @@
+#ifndef CUSTOMER_HDR
+#define CUSTOMER_HDR
+
+#include <string>
+
+//a customer HAS-A:
+//-unique stirng name of customer
+//-string description of the task at hand
+//-int value representing the estimated time will be needed for task
+//-int value representing the bank clock time when this customer begins service
+//      ...i.e. the time that the customer leaves one queue and enters other
+class Customer
+{
+private:
+        std::string customerName;
+		std::string task;
+		int  timeTask;
+		int  timeServed;
+		
+public:
+    
+//default constructor.
+//-set strings to "none" and ints to 0
+Customer();
+
+//constructor that recieves arguments for name, task, timeTask
+Customer(std::string customerName, std::string task, int timeTask);
+
+//setTimeServed
+//-pre: recieves an integer value 
+//-post: sets timeServed to that value
+//-post: return nothing
+void setTimeServed(int newTime);
+
+//getTask
+//-pre: recieves nothing
+//-post: return the task name
+std::string getTask() const;
+
+
+//getTimeTask
+//-pre: recieves nothing
+//-post: returns timeTask
+int getTimeTask() const;
+
+//getTimeServed
+//-pre: recieves nothing
+//-post: returns timeServed
+int getTimeServed() const;
+
+//getName
+//-pre: Recieves nothing
+//-post: returns the customer's name
+std::string getName() const;
+
+};
+
+#endif

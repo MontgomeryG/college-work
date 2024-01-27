@@ -1,0 +1,121 @@
+#include "Node.h"
+#include "Customer.h"
+#include "Queue.h"
+#include <iostream>
+using namespace std;
+
+
+int main()
+ {
+     //create que of waiting customers
+     Queue waitingCustomers; 
+     
+     //create 20 customers
+     //-Name = letters A-T
+     //-All are making deposits
+     //-Each deposit takes one unit of time
+     Customer customer1("A", "Deposit", 1);
+     Customer customer2("B", "Withdraw", 2);
+     Customer customer3("C", "New Account", 4);
+     Customer customer4("D", "Loan Application", 8);
+     Customer customer5("E", "Deposit", 1);
+     Customer customer6("F", "Withdraw", 2);
+     Customer customer7("G", "New Account", 4);
+     Customer customer8("H", "Loan Application", 8);
+     Customer customer9("I", "Deposit", 1);
+     Customer customer10("J", "Withdraw", 2);
+     Customer customer11("K", "New Account", 4);
+     Customer customer12("L", "Loan Application", 8);
+     Customer customer13("M", "Deposit", 1);
+     Customer customer14("N", "Withdraw", 2);
+     Customer customer15("O", "New Account", 4);
+     Customer customer16("P", "Loan Application", 8);
+     Customer customer17("Q", "Deposit", 1);
+     Customer customer18("R", "Withdraw", 2);
+     Customer customer19("S", "New Account", 4);
+     Customer customer20("T", "Loan Application", 8);
+     
+     //Insert each new customer into the waitingCustomers queue
+    waitingCustomers.insert(customer1);
+    waitingCustomers.insert(customer2);
+    waitingCustomers.insert(customer3);
+    waitingCustomers.insert(customer4);
+    waitingCustomers.insert(customer5);
+    waitingCustomers.insert(customer6);
+    waitingCustomers.insert(customer7);
+    waitingCustomers.insert(customer8);
+    waitingCustomers.insert(customer9);
+    waitingCustomers.insert(customer10);
+    waitingCustomers.insert(customer11);
+    waitingCustomers.insert(customer12);
+    waitingCustomers.insert(customer13);
+    waitingCustomers.insert(customer14);
+    waitingCustomers.insert(customer15);
+    waitingCustomers.insert(customer16);
+    waitingCustomers.insert(customer17);
+    waitingCustomers.insert(customer18);
+    waitingCustomers.insert(customer19);
+    waitingCustomers.insert(customer20);
+   
+
+  //tellerCustomers
+  //An array of Queue one per teller
+  //When teller begins serving customer, remove that customer from waitingCustomers
+  //        and insert that customer into one of the teller Queues.
+  //So we have an array of the bank tellers, each with their own queue
+  //We have 4 bank tellers
+  Queue tellerCustomers[4];
+  //remember that to access these queues, do tellerCustomers[1].insert(customer)
+  
+  //tellerWork
+  //An array of ints, one per teller
+  //Each value in this array represents the remaining time needed for each teller
+  //        to finish servicing their current Customer.getTimeTask().
+  int tellerWork[4];
+  tellerWork[0] = 0;
+  tellerWork[1] = 0;
+  tellerWork[2] = 0;
+  tellerWork[3] = 0;
+  
+  //clockTime
+  //int that represents the current simulaiton time, initially 0
+  int clockTime = 0;
+  //-while waitingCustomers is not empty
+  //-while tellerWork is such that at least one teller has work left
+  while(waitingCustomers.isEmpty()==false)// && (tellerWork[0] !=0 || tellerWork[1] !=0 || tellerWork[2] !=0 || tellerWork[3] !=0))
+  {
+    int t = 0;
+    //while we have more tellers 
+    while(t < 4)
+    {
+        if(tellerWork[t] ==0 && waitingCustomers.isEmpty()==false)
+        {
+            //make C a customer we remove from the waiting queue
+            Customer C = waitingCustomers.remove();
+            //set the integer representing the teller's work time left to the amount of time
+            //needed to complete the task
+            tellerWork[t] = C.getTimeTask();
+            //set the customers time served to the current clocktime.
+            C.setTimeServed(clockTime);
+            //insert C(our customer from the waiting queue) into the given teller's queue
+            tellerCustomers[t].insert(C);
+        }
+        //Decrement tellerWork by 1 for the current teller
+        tellerWork[t] = tellerWork[t] - 1;
+        //increment t by one to move to next teller
+        t = t + 1;
+    }
+    clockTime = clockTime + 1;
+    
+    t = 0; 
+    while(t < 4)
+    {
+      while(tellerCustomers[t].isEmpty()==false)
+      {
+          Customer C = tellerCustomers[t].remove();
+          cout << C.getTimeServed() << ":" << "  "<< C.getName() << " did  " << C.getTask() << endl;
+      }
+      t = t + 1;
+    }
+  }
+}          

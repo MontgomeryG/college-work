@@ -1,0 +1,25 @@
+#include "Node.h"
+#include "Customer.h"
+#include "Queue.h"
+#include <iostream>
+using namespace std;
+
+
+int main()
+ {
+    Customer customer1("Monty", "Withdraw", 5);
+    Customer customer2("Isa", "Balance Checks", 10);
+    Customer customer3("Mom", "Fund College", 60);
+     
+    Queue newQueue;
+	    
+
+    newQueue.insert(customer1);
+    newQueue.insert(customer2);
+    newQueue.insert(customer3);
+    
+    cout << newQueue.remove().getName() << endl;
+    cout << newQueue.remove().getTask() << endl;
+    cout << newQueue.remove().getName() << endl;
+
+}          

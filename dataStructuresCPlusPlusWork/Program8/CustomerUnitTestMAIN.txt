@@ -1,0 +1,11 @@
+#include <iostream>
+#include "Customer.h"
+
+
+int main()
+{
+    Customer Customer1("Montgomery", "pay dues", 5);
+    
+    Customer1.setTimeServed(3);
+    std::cout << "Name: " << Customer1.getName() << "   Task: " << Customer1.getTask() << "     Time of Task: " << Customer1.getTimeTask() << "     Time Serviced: " << Customer1.getTimeServed() << std::endl;
+}

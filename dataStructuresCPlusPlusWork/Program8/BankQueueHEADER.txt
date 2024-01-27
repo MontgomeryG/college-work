@@ -1,0 +1,50 @@
+#ifndef QUEUE_HDR
+#define QUEUE_HDR
+#include "Node.h"
+#include "Customer.h"
+
+
+class Queue
+{
+public:
+//constructor
+//initializes contents of queue to empty
+Queue();
+
+//isEmpty
+//if first and last are NULL return true
+//else false
+bool isEmpty() const;
+
+//isFull
+//if queue is full return true
+//else false
+//will only be true when memory limit reached...
+bool isFull() const;
+
+//insert
+//recieves customer value 
+//post: if not full, insert customer data
+//at end of que and return true...else false
+//Must create new Node to hold new customer
+//Then insert it at the end
+bool insert(Customer);
+
+
+//remove
+//recieves nothing
+//returns the data associated with customer
+//removes them from the queue
+Customer remove();
+
+//A queue HAS-A
+//-first: pointer to the first Node in the structure...will be NULL when queue empty
+//-last: pointer to the last Node...will be NULL if queue empty
+private:
+Node* first;
+Node* last;
+
+};
+
+
+#endif
